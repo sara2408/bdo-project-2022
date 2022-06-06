@@ -10,7 +10,6 @@
     ```
 1. Download the following pickle files to `data/pickle`:
     - `all_data.pkl`
-    - `token_stopwords.pkl`
 
 1. Run the flask development server
     ```
