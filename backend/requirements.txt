@@ -1,0 +1,4 @@
+whoosh
+nltk
+flask
+wikipedia
