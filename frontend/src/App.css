@@ -14,3 +14,9 @@
 .header-cell {
   background-color: lightgray;
 }
+
+.wrap-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

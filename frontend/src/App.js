@@ -22,7 +22,7 @@ const columns = [
   {
     field: "Name",
     headerName: "Company name",
-    flex: 4,
+    flex: 1,
     headerClassName: "header-cell",
   },
   {
@@ -31,21 +31,11 @@ const columns = [
     flex: 4,
     headerClassName: "header-cell",
     sortable: false,
-    renderCell: (params) => {
-      return (
-        <Tooltip title={params.row.Summary}>
-          <span
-            style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {params.row.Summary}
-          </span>
-        </Tooltip>
-      );
-    },
+    renderCell: (params) => (
+      <Tooltip title={params.row.Summary}>
+        <span className="wrap-cell">{params.row.Summary}</span>
+      </Tooltip>
+    ),
   },
   {
     field: "Beta",
