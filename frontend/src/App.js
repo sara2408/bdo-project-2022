@@ -18,27 +18,32 @@ import "./App.css";
 import bdoLogo from "./bdo_logo.svg";
 
 const columns = [
-  // { field: "ISIN", headerName: "ISIN", flex: 1 },
   {
     field: "Name",
     headerName: "Company name",
-    flex: 1,
-    headerClassName: "header-cell",
-  },
-  {
-    field: "Summary",
-    headerName: "Company description",
-    flex: 4,
+    flex: 2,
     headerClassName: "header-cell",
     sortable: false,
     renderCell: (params) => (
-      <Tooltip title={params.row.Summary}>
-        <span className="wrap-cell">{params.row.Summary}</span>
+      <Tooltip title={params.row.Name}>
+        <span className="wrap-cell">{params.row.Name}</span>
       </Tooltip>
     ),
   },
   {
-    field: "Beta",
+    field: "Description",
+    headerName: "Company description",
+    flex: 8,
+    headerClassName: "header-cell",
+    sortable: false,
+    renderCell: (params) => (
+      <Tooltip title={params.row.Description}>
+        <span className="wrap-cell">{params.row.Description}</span>
+      </Tooltip>
+    ),
+  },
+  {
+    field: "BetaValue",
     headerName: "Beta value",
     flex: 1,
     headerClassName: "header-cell",
@@ -54,7 +59,6 @@ function App() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [infoSnackbarOpen, setInfoSnackbarOpen] = useState(false);
-  // const [selectedISBNs, setSelectedISBNs] = useState([]);  // Selection
 
   const fetchHits = async (queryString) => {
     setLoading(true);
@@ -152,8 +156,6 @@ function App() {
                 </Stack>
               ),
             }}
-            // onSelectionModelChange={setSelectedISBNs}  // Selection
-            // checkboxSelection  // Selection
           />
         )}
       </Stack>

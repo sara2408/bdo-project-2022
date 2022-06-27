@@ -2,3 +2,4 @@ whoosh
 nltk
 flask
 wikipedia
+yfinance

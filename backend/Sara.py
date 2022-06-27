@@ -1,31 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ### **<span style='color:darkred'>SBWL Data Science <br/> Course: 5159 - Data Science Lab</span>**
-# 
-# ##### Company: **BDO**
-# 
-# ##### Coach: Harald Wimmer
-# 
-# ##### Supervisor: Ronald Hochreiter
-# 
-# ##### Team Members: **Anna Maria Berger** (h1260562), **Sara Jurovata** (h11919776), **Philipp Markopulos** (h12030674)
-
-# #### **2. Natural Language Processing**
-
-# #### Whoosh Search Engine
-# **Sources:** <ul> <li> https://appliedmachinelearning.blog/2018/07/31/developing-a-fast-indexing-and-full-text-search-engine-with-whoosh-a-pure-python-library/ <li> https://whoosh.readthedocs.io/en/latest/ <ul>
-
-
 # get_ipython().system('pip install whoosh')
 # get_ipython().system('pip install nltk')
 
-
-
 # Import libraries and packages
 import os
-import pickle
-import wikipedia
+import pandas as pd
+from pyexpat.errors import XML_ERROR_SYNTAX
 from whoosh import index, scoring
 from whoosh.analysis import StandardAnalyzer
 from whoosh.fields import Schema, TEXT, ID
@@ -40,21 +19,17 @@ def add_dataframe_to_index(df, index):
     for _, doc in df.iterrows():
         writer.add_document(
             Name=str(doc.Name),
+            Description=str(doc.Description),
+            BetaValue=str(doc['Beta Value']),
             ISIN=str(doc.ISIN),
             Text=str(doc.Text)
         )
     writer.commit()
 
 def load_all_data():
-    # with open(tokenpath + 'all_data.pkl', 'rb') as f:
-    #     all_data = pickle.load(f)
-
-    tokenpath = "./data/pickle/"
-    # pickle file with all the extracted text but only stopwords removed
-    with open(tokenpath + 'all_data.pkl', 'rb') as f:
-        all_data = pickle.load(f)
-
-        return all_data
+     # pickle file with all the extracted text but only stopwords removed
+    all_data = pd.read_pickle('./data/pickle/all_data.pkl')
+    return all_data
 
 def create_search_index(search_schema):
     # TODO: consider adding logic to trigger indexing if the data was updated
@@ -81,20 +56,14 @@ def stem_query(query):
         stem_query.append(" ")
     return "".join(stem_query)
 
-def add_wikipedia_details(companies):
-    for company in companies:
-        try:
-            company['Summary'] = wikipedia.summary(company['Name'], sentences=1)
-        except:
-            company['Summary'] = '-'
-    return companies
-
-def search(query_str: str, match_limit:int=3):
+def search(query_str: str, match_limit:int=10):
     query_str = stem_query(query_str)
 
     search_schema = Schema(
         Name=TEXT(stored=True, analyzer=StandardAnalyzer()),
         ISIN=ID(stored=True),
+        Description=TEXT(stored=True),
+        BetaValue=TEXT(stored=True),
         Text=TEXT(analyzer=StandardAnalyzer())
     )
     ix = create_search_index(search_schema)
@@ -105,13 +74,5 @@ def search(query_str: str, match_limit:int=3):
     with ix.searcher(weighting=w) as searcher:
         query = QueryParser("Text", ix.schema).parse(query_str)
         results = searcher.search(query, limit=match_limit)
-
-        # Extra: if we wanted to output the actual Text for a company company
-        # all_data.set_index('Name', drop=True, inplace=True)
-        # all_data.loc[company, 'Text']
-
         companies = [dict(r) for r in results]
-
-        companies_with_wiki = add_wikipedia_details(companies)
-
-        return companies_with_wiki
+        return companies
